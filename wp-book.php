@@ -1,5 +1,4 @@
 <?php
-include 'C:\xampp\htdocs\blogs\wp-content\themes\twentytwentyfour\functions.php';
 /**
  * The plugin bootstrap file
  *
@@ -24,9 +23,6 @@ include 'C:\xampp\htdocs\blogs\wp-content\themes\twentytwentyfour\functions.php'
  * Text Domain:       wp-book
  * Domain Path:       /languages
  */
-
-
-
 
 function cw_post_type_book() {
 	$supports = array(
@@ -58,80 +54,58 @@ function cw_post_type_book() {
 	'not_found' => __('No Books found.'),
 	// _x , __ used for internationalization
 	// The above array Displays the Text in various places
-	// It dispalys the text in Wp-admin window , Post
+	// It dispalys the text in Wp-admin window , Post...
 	);
 	$args = array(
 	'supports' => $supports,
 	'labels' => $labels,
 	'public' => true,
 	'query_var' => true,
-	'rewrite' => array('slug' => 'news'),
+	'rewrite' => array('slug' => 'book'),
 	'has_archive' => true,
 	'hierarchical' => false,
-	);
-	register_post_type('news', $args);// Registers custom post type
-	}
-	add_action('init', 'cw_post_type_book');
+	'menu_position' => null,
+	'supports'=>array('title','editor','author','thumbnail','excerpt','comments')
+);
+register_post_type('book', $args);// Registers custom post type
+}
+add_action('init', 'cw_post_type_book',0);
 // Refrence:-https://www.cloudways.com/blog/wordpress-custom-post-type/#what-are-cpt
+
 	
+// Function to create custom taxonomies
+function wp_book_custom_taxonomies() {
+    //new hierarchical taxonomy (like categories)
+    $labels = array(
+        'name'              => _x('Book Categories', 'taxonomy general name', 'wp-book'),
+        'singular_name'     => _x('Book Category', 'taxonomy singular name', 'wp-book'),
+        'search_items'      => __('Search Book Categories', 'wp-book'),
+        'all_items'         => __('All Book Categories', 'wp-book'),
+        'parent_item'       => __('Parent Book Category', 'wp-book'),
+        'parent_item_colon' => __('Parent Book Category:', 'wp-book'),
+        'edit_item'         => __('Edit Book Category', 'wp-book'),
+        'update_item'       => __('Update Book Category', 'wp-book'),
+        'add_new_item'      => __('Add New Book Category', 'wp-book'),
+        'new_item_name'     => __('New Book Category Name', 'wp-book'),
+        'menu_name'         => __('Book Categories', 'wp-book'),
+    );
+    $args = array(
+        'hierarchical'      => true,
+        'labels'            => $labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'query_var'         => true,
+        'rewrite'           => array('slug' => 'book-category'),
+    );
+    register_taxonomy('book_category', array('book'), $args);
+	// refrence:-https://wordpress.stackexchange.com/questions/15775/custom-taxonomy-hierarchy-for-custom-post-types-eg-categories-and-subcategories
+	// refrence:-https://solidwp.com/blog/wordpress-taxonomies/#h-taxonomy-template-hierarchy
+}
+// Hook into the init action and call wp_book_custom_taxonomies when it fires
+add_action('init', 'wp_book_custom_taxonomies',0);
 
 
 
 
 
 
-// If this file is called directly, abort.
-// if ( ! defined( 'WPINC' ) ) {
-// 	die;
-// }
-
-// /**
-//  * Currently plugin version.
-//  * Start at version 1.0.0 and use SemVer - https://semver.org
-//  * Rename this for your plugin and update it as you release new versions.
-//  */
-// define( 'WP_BOOK_VERSION', '1.0.0' );
-
-// /**
-//  * The code that runs during plugin activation.
-//  * This action is documented in includes/class-wp-book-activator.php
-//  */
-// function activate_wp_book() {
-// 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-book-activator.php';
-// 	Wp_Book_Activator::activate();
-// }
-
-// /**
-//  * The code that runs during plugin deactivation.
-//  * This action is documented in includes/class-wp-book-deactivator.php
-//  */
-// function deactivate_wp_book() {
-// 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-book-deactivator.php';
-// 	Wp_Book_Deactivator::deactivate();
-// }
-
-// register_activation_hook( __FILE__, 'activate_wp_book' );
-// register_deactivation_hook( __FILE__, 'deactivate_wp_book' );
-
-// /**
-//  * The core plugin class that is used to define internationalization,
-//  * admin-specific hooks, and public-facing site hooks.
-//  */
-// require plugin_dir_path( __FILE__ ) . 'includes/class-wp-book.php';
-
-// /**
-//  * Begins execution of the plugin.
-//  *
-//  * Since everything within the plugin is registered via hooks,
-//  * then kicking off the plugin from this point in the file does
-//  * not affect the page life cycle.
-//  *
-//  * @since    1.0.0
-//  */
-// function run_wp_book() {
-
-// 	$plugin = new Wp_Book();
-// 	$plugin->run();
-
-// }
-// run_wp_book();
