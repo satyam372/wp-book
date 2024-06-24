@@ -40,18 +40,18 @@ function cw_post_type_book() {
 	// This array specifies the feature the post has
 	);
 	$labels = array(
-	'name' => _x('Books', 'plural'),
-	'singular_name' => _x('Books', 'singular'),
-	'menu_name' => _x('Books', 'admin menu'),
-	'name_admin_bar' => _x('Books', 'admin bar'),
-	'add_new' => _x('Add New', 'add new'),
-	'add_new_item' => __('Add New Book'),
-	'new_item' => __('New Book'),
-	'edit_item' => __('Edit Book'),
-	'view_item' => __('View Books'),
-	'all_items' => __('All Books'),
-	'search_items' => __('Search Books'),
-	'not_found' => __('No Books found.'),
+	'name'              => _x('Books', 'plural'),
+	'singular_name'     => _x('Books', 'singular'),
+	'menu_name'         => _x('Books', 'admin menu'),
+	'name_admin_bar'    => _x('Books', 'admin bar'),
+	'add_new'           => _x('Add New', 'add new'),
+	'add_new_item'      => __('Add New Book'),
+	'new_item'          => __('New Book'),
+	'edit_item'         => __('Edit Book'),
+	'view_item'         => __('View Books'),
+	'all_items'         => __('All Books'),
+	'search_items'      => __('Search Books'),
+	'not_found'         => __('No Books found.'),
 	// _x , __ used for internationalization
 	// The above array Displays the Text in various places
 	// It dispalys the text in Wp-admin window , Post...
@@ -102,10 +102,38 @@ function wp_book_custom_taxonomies() {
 	// refrence:-https://solidwp.com/blog/wordpress-taxonomies/#h-taxonomy-template-hierarchy
 }
 // Hook into the init action and call wp_book_custom_taxonomies when it fires
-add_action('init', 'wp_book_custom_taxonomies',0);
+add_action('init', 'wp_book_custom_taxonomies');
 
 
+function wp_book_Tags(){
 
+	$labels=array(
+		'name'                       =>_x('Book Tags','taxonomy general name','wp-book'),
+		'singular_name'              =>_x('Book Tag','taxonomy singular name','wp-book'),
+		'popular_items'              =>_x('search Book Tags','wp-book'),
+		'edit_item'                  => __('Edit Book Tag', 'wp-book'),
+        'update_item'                => __('Update Book Tag', 'wp-book'),
+        'add_new_item'               => __('Add New Book Tag', 'wp-book'),// text on button
+        'new_item_name'              => __('New Book Tag Name', 'wp-book'),
+        'separate_items_with_commas' => __('Separate book tags with commas', 'wp-book'),
+        'add_or_remove_items'        => __('Add or remove book tags', 'wp-book'),
+        'choose_from_most_used'      => __('Choose from the most used book tags', 'wp-book'),
+        'not_found'                  => __('No book tags found.', 'wp-book'),
+        'menu_name'                  => __('Book Tags', 'wp-book'),
+	);
+
+	$args=array(
+		'hierarchical'          =>false,
+		'labels'                =>$labels,
+		'show_ui'               =>true,
+		'show_admin_column'     =>true,
+		'update_count_callback' =>true,
+		'query_var'             =>true,
+		'rewrite'               =>array('slug'=>'book-tags'),
+	);
+	register_taxonomy('book-tags',array('book'),$args);
+}
+add_action('init','wp_book_Tags');
 
 
 
