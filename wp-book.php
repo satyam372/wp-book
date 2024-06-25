@@ -67,7 +67,7 @@ function cw_post_type_book() {
 	'menu_position' => null,
 	'supports'=>array('title','editor','author','thumbnail','excerpt','comments')
 );
-register_post_type('book', $args);// Registers custom post type
+    register_post_type('book', $args);// Registers custom post type
 }
 add_action('init', 'cw_post_type_book',0);
 // Refrence:-https://www.cloudways.com/blog/wordpress-custom-post-type/#what-are-cpt
@@ -135,5 +135,88 @@ function wp_book_Tags(){
 }
 add_action('init','wp_book_Tags');
 
+// Function to add custom meta box
+// step 1:- Add meta box
+
+function wp_book_custom_box(){
+	$screens=['post','book']; // specify the post type. 
+	// Post is default post type and 'book' custom post type
+	foreach ($screens as $screen)
+    // The above loop iterates through each...conti
+   // CPT mentioned in screens array and adds following block of code
+	{
+		add_meta_box(
+			'wp_book_box_id', // Unique id
+			'Book Information', // Title of meta box
+			'wp_book_custom_box_html', // callback
+			$screen   // Post type
+		);
+	}
+}
+add_action('add_meta_boxes','wp_book_custom_box');
+
+// step2:- Adding form elements 
+
+function wp_book_custom_box_html($post) {
+    wp_nonce_field('wp_book_save_meta_box_data', 'wp_book_meta_box_nonce');
+
+    $author_name = get_post_meta($post->ID, '_wp_book_author_name', true);
+    $price = get_post_meta($post->ID, '_wp_book_price', true);
+    $publisher = get_post_meta($post->ID, '_wp_book_publisher', true);
+
+    echo '<label for="wp_book_author_name">Author Name</label>';
+    echo '<input type="text" id="wp_book_author_name" name="wp_book_author_name" value="' . esc_attr($author_name) . '" size="25" />';
+    echo '<br><br>';
+
+    echo '<label for="wp_book_price">Price</label>';
+    echo '<input type="text" id="wp_book_price" name="wp_book_price" value="' . esc_attr($price) . '" size="25" />';
+    echo '<br><br>';
+
+    echo '<label for="wp_book_publisher">Publisher</label>';
+    echo '<input type="text" id="wp_book_publisher" name="wp_book_publisher" value="' . esc_attr($publisher) . '" size="25" />';
+    echo '<br><br>';
+}
+
+// step3:- Saving the Data
+function wp_book_save_meta_box_data($post_id) {
+    if (!isset($_POST['wp_book_meta_box_nonce'])) {
+        return;
+    }  // Nonce check
+
+    if (!wp_verify_nonce($_POST['wp_book_meta_box_nonce'], 'wp_book_save_meta_box_data')) {
+        return;
+    }// Verify Nonce
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }// Autosave check
+
+    if (isset($_POST['post_type']) && 'page' == $_POST['post_type']) {
+        if (!current_user_can('edit_page', $post_id)) {
+            return;
+        }
+    } else {
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+    }
+
+    if (isset($_POST['wp_book_author_name'])) {
+        $author_name = sanitize_text_field($_POST['wp_book_author_name']);
+        update_post_meta($post_id, '_wp_book_author_name', $author_name);
+    }
+
+    if (isset($_POST['wp_book_price'])) {
+        $price = sanitize_text_field($_POST['wp_book_price']);
+        update_post_meta($post_id, '_wp_book_price', $price);
+    }
+
+    if (isset($_POST['wp_book_publisher'])) {
+        $publisher = sanitize_text_field($_POST['wp_book_publisher']);
+        update_post_meta($post_id, '_wp_book_publisher', $publisher);
+    }
+	// Save the meta box
+}
+add_action('save_post', 'wp_book_save_meta_box_data');
 
 
